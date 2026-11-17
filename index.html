@@ -153,7 +153,7 @@
         .watermark-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(11, 15, 25, 0.92);
+            background: rgba(11, 15, 25, 0.94);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             display: flex;
@@ -189,7 +189,7 @@
 
         .watermark-overlay.active .wm-circle {
             transform: scale(1);
-            animation: pulseGlow 1.2s infinite alternate;
+            animation: pulseGlow 1.3s infinite alternate;
         }
 
         .wm-title {
@@ -208,7 +208,7 @@
         .watermark-overlay.active .wm-title {
             opacity: 1;
             transform: translateY(0);
-            animation: shimmerText 1.2s linear infinite;
+            animation: shimmerText 1.3s linear infinite;
         }
 
         .wm-sub {
@@ -240,7 +240,7 @@
         }
 
         .watermark-overlay.active .wm-bar {
-            animation: fillBar 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: fillBar 1.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         @keyframes pulseGlow {
@@ -361,8 +361,13 @@
                     setTimeout(() => {
                         overlay.classList.remove('active');
                     }, 500);
-                }, 1200); // مدة العرض 1.2 ثانية
+                }, 1300);
             });
+        });
+
+        // إخفاء الشاشة تلقائياً إذا عاد المستخدم بزر الرجوع في المتصفح
+        window.addEventListener('pageshow', function() {
+            overlay.classList.remove('active');
         });
     </script>
 
