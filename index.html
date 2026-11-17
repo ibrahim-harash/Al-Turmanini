@@ -149,13 +149,13 @@
             color: #64748b;
         }
 
-        /* شاشة العلامة المائية المتحركة عند الضغط */
+        /* شاشة العلامة المائية المتحركة (عند الدخول وعند الضغط) */
         .watermark-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(11, 15, 25, 0.94);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            background: #0b0f19;
+            background-image: 
+                radial-gradient(circle at 50% 40%, rgba(245, 158, 11, 0.18) 0%, transparent 55%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -163,7 +163,7 @@
             z-index: 9999;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.25s ease;
+            transition: opacity 0.35s ease;
         }
 
         .watermark-overlay.active {
@@ -184,7 +184,7 @@
             margin-bottom: 18px;
             box-shadow: 0 0 35px rgba(245, 158, 11, 0.6);
             transform: scale(0.7);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .watermark-overlay.active .wm-circle {
@@ -193,7 +193,7 @@
         }
 
         .wm-title {
-            font-size: 38px;
+            font-size: 40px;
             font-weight: 900;
             letter-spacing: 1px;
             background: linear-gradient(to right, #ffffff, #fbbf24, #f97316, #ffffff);
@@ -202,7 +202,7 @@
             -webkit-text-fill-color: transparent;
             opacity: 0;
             transform: translateY(15px);
-            transition: all 0.4s ease 0.1s;
+            transition: all 0.45s ease 0.1s;
         }
 
         .watermark-overlay.active .wm-title {
@@ -213,10 +213,10 @@
 
         .wm-sub {
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 14px;
             margin-top: 6px;
             opacity: 0;
-            transition: opacity 0.4s ease 0.2s;
+            transition: opacity 0.45s ease 0.2s;
         }
 
         .watermark-overlay.active .wm-sub {
@@ -224,7 +224,7 @@
         }
 
         .wm-progress {
-            width: 160px;
+            width: 170px;
             height: 4px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
@@ -240,12 +240,12 @@
         }
 
         .watermark-overlay.active .wm-bar {
-            animation: fillBar 1.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: fillBar 1.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         @keyframes pulseGlow {
-            from { box-shadow: 0 0 25px rgba(245, 158, 11, 0.4); }
-            to { box-shadow: 0 0 50px rgba(234, 88, 12, 0.85); }
+            from { box-shadow: 0 0 25px rgba(245, 158, 11, 0.45); }
+            to { box-shadow: 0 0 55px rgba(234, 88, 12, 0.9); }
         }
 
         @keyframes shimmerText {
@@ -335,11 +335,11 @@
         </div>
     </div>
 
-    <!-- شاشة العلامة المائية المتحركة -->
-    <div class="watermark-overlay" id="watermarkOverlay">
+    <!-- شاشة العلامة المائية المتحركة (تعمل عند فتح الموقع وعند الضغط على الروابط) -->
+    <div class="watermark-overlay active" id="watermarkOverlay">
         <div class="wm-circle"><i class="fas fa-building"></i></div>
         <div class="wm-title">الترمانيني</div>
-        <div class="wm-sub">جاري توجيهك...</div>
+        <div class="wm-sub" id="wmSubText">أهلاً بكم في المنصة الرسمية</div>
         <div class="wm-progress">
             <div class="wm-bar"></div>
         </div>
@@ -347,13 +347,23 @@
 
     <script>
         const overlay = document.getElementById('watermarkOverlay');
+        const subText = document.getElementById('wmSubText');
         const links = document.querySelectorAll('.link-btn');
 
+        // 1. إخفاء شاشة الترحيب بعد 1.4 ثانية من فتح الرابط
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 1400);
+        });
+
+        // 2. إظهارها مجدداً عند الضغط على أي زر للانتقال
         links.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const targetUrl = this.getAttribute('href');
 
+                subText.innerText = 'جاري توجيهك...';
                 overlay.classList.add('active');
 
                 setTimeout(() => {
@@ -365,9 +375,11 @@
             });
         });
 
-        // إخفاء الشاشة تلقائياً إذا عاد المستخدم بزر الرجوع في المتصفح
-        window.addEventListener('pageshow', function() {
-            overlay.classList.remove('active');
+        // 3. إخفاؤها عند الرجوع بزر المتصفح
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                overlay.classList.remove('active');
+            }
         });
     </script>
 
